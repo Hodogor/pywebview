@@ -12,6 +12,7 @@ import Foundation
 import AppKit
 import WebKit
 import PyObjCTools.AppHelper
+import webbrowser
 from objc import nil, super
 
 from webview.localization import localization
@@ -141,6 +142,12 @@ class BrowserView:
                     print_op.runOperation()
 
             PyObjCTools.AppHelper.callAfter(printView, frameview)
+
+        # Open target="_blank" links in external browser
+        def webView_decidePolicyForNewWindowAction_request_newFrameName_decisionListener_(self, webview, action, request, name, listener):
+            if name == '_blank':
+                webbrowser.open(request.URL().absoluteString(), 2, True)
+            listener.ignore()
 
         # WebPolicyDelegate method, invoked when a navigation decision needs to be made
         def webView_decidePolicyForNavigationAction_request_frame_decisionListener_(self, webview, action, request, frame, listener):
